@@ -1,0 +1,6 @@
+!.gitignore
+*.zip
+*.tar.bz2
+*.tar.gz
+/.idea/*
+/bin/*

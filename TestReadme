@@ -1,0 +1,16 @@
+1.go test command
+#go test -v -run TestA test/unit_test.go
+go test -v -bench . test/bench_test.go
+#go test -v test/unit_test.go
+
+2.go test usage
+-bench regexp 执行相应的 benchmarks，例如 -bench=.；
+-cover 开启测试覆盖率；
+-run regexp 只运行 regexp 匹配的函数，例如 -run=Array 那么就执行包含有 Array 开头的函数；
+-v 显示测试的详细命令。
+-benchtime 自定义测试时间
+-benchmem 显示内存分配情况，可以知道每次调用有几次内存分配，每次分配多少字节
+
+基准测试框架对一个测试用例的默认测试时间是 1 秒。开始测试时，当以 Benchmark 开头的基准测试用例函数返回时还不到 1 秒，那>么 testing.B 中的 N 值将按 1、2、5、10、20、50……递增，同时以递增后的值重新调用基准测试用例函数。
+
+

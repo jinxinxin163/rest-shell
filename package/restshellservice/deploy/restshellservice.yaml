@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: harbor-registry-secret
+  namespace: ensaas-service
+data:
+  .dockerconfigjson: ewoJImF1dGhzIjogewoJCSJoYXJib3Iud2lzZS1wYWFzLmlvIjogewoJCQkiYXV0aCI6ICJhbWx1TG5ocGJqcEJaSFpoYm5SbFkyaHFhVzU0YVc0eE1qTT0iCgkJfSwKCQkiaHR0cHM6Ly9pbmRleC5kb2NrZXIuaW8vdjEvIjogewoJCQkiYXV0aCI6ICJZV051WVdSMk9tcHBibDlrYjJOclpYST0iCgkJfQoJfSwKCSJIdHRwSGVhZGVycyI6IHsKCQkiVXNlci1BZ2VudCI6ICJEb2NrZXItQ2xpZW50LzE4LjA5LjcgKGxpbnV4KSIKCX0KfQ==
+type: kubernetes.io/dockerconfigjson
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: restshellservice
+  namespace: ensaas-service
+  labels:
+    app: restshellservice
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: restshellservice
+    spec:
+      #imagePullSecrets:
+      #- name: harbor-registry-secret
+      containers:
+        - name: restshellservice
+          image: registry.cn-shanghai.aliyuncs.com/advantech-k8s/restshellservice:v1.0.0
+          resources:
+            requests:
+              memory: "20Mi"
+              cpu: "10m"
+              ephemeral-storage: "100Mi"
+            limits:
+              memory: "100Mi"
+              cpu: "165m"
+              ephemeral-storage: "200Mi"
+          imagePullPolicy: Always
+          env:
+          - name: mode
+            value: production
+          - name: mp_url
+            value: http://api.mp.master.internal/v1
+          - name: sso_url
+            value: http://api.sso.master.internal/v4.0/
+          - name: host
+            value: 172.21.92.174
+          - name: port
+            value: "30848"
+          - name: username
+            value: postgres
+          - name: password
+            value: Admin123
+          - name: database
+            value: mpapi 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+  name: restshellservice
+  namespace: ensaas-service
+  labels:
+    app: restshellservice
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: restshellservice
