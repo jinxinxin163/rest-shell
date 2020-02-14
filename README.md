@@ -13,6 +13,6 @@
 # Build and Running:
 	git clone https://github.com/jinxinxin163/rest-shell.git
 	cd rest-shell
-    	make 
-    	./bin/restshellservice
+	make 
+	./bin/restshellservice
 
